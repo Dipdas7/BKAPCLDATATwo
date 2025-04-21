@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharuch Kishan Agrofeed - FY 2023-24 Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-center text-green-800">Bharuch Kishan Agrofeed Producer Company Limited</h1>
+            <h2 class="text-2xl text-center text-green-700">Financial Year 2023-24 Progress Report</h2>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Total Transaction Amount</h3>
+                <p class="text-3xl font-bold text-green-600">₹7,255,477</p>
+                <p class="text-sm text-gray-500 mt-1">April 2023 - March 2024</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Total Profit</h3>
+                <p class="text-3xl font-bold text-blue-600">₹1,050,720</p>
+                <p class="text-sm text-gray-500 mt-1">April 2023 - March 2024</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Total Turnover</h3>
+                <p class="text-3xl font-bold text-purple-600">₹3,672,063</p>
+                <p class="text-sm text-gray-500 mt-1">April 2023 - March 2024</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Monthly Sales Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold text-green-700 mb-4">Monthly Sales Performance</h3>
+                <canvas id="salesChart" class="w-full h-64"></canvas>
+            </div>
+            
+            <!-- Product Distribution Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold text-green-700 mb-4">Revenue by Product Category</h3>
+                <canvas id="productChart" class="w-full h-64"></canvas>
+            </div>
+        </div>
+
+        <!-- Transaction Details -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+            <div class="p-4 border-b bg-gray-50">
+                <h3 class="text-lg font-semibold text-green-700">Transaction Details</h3>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-2 gap-2">
+                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        <input type="text" id="searchInput" placeholder="Search transactions..." class="px-3 py-2 border rounded-md text-sm w-full">
+                        <select id="monthFilter" class="px-3 py-2 border rounded-md text-sm w-full sm:w-40">
+                            <option value="">All Months</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                        </select>
+                        <select id="productFilter" class="px-3 py-2 border rounded-md text-sm w-full sm:w-48">
+                            <option value="">All Products</option>
+                            <option value="Eucalyptus Plants">Eucalyptus Plants</option>
+                            <option value="Eucalyptus Harvest">Eucalyptus Harvest</option>
+                            <option value="Agro Waste">Agro Waste</option>
+                            <option value="Oil Cans">Oil Cans</option>
+                            <option value="Kesar Keri">Kesar Keri</option>
+                        </select>
+                    </div>
+                    <button onclick="exportToExcel()" class="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition w-full sm:w-auto">
+                        Export to Excel
+                    </button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Month</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FPO Rate</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agency</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTable" class="bg-white divide-y divide-gray-200">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-4 border-t bg-gray-50 text-right">
+                <p class="text-sm text-gray-600">Showing <span id="visibleCount">0</span> of <span id="totalCount">0</span> transactions</p>
+            </div>
+        </div>
+
+        <!-- Monthly Summary -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+            <div class="p-4 border-b bg-gray-50">
+                <h3 class="text-lg font-semibold text-green-700">Monthly Summary</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th rowspan="2" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider align-top">Product</th>
+                            <th colspan="12" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Months</th>
+                            <th rowspan="2" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider align-top">Total</th>
+                        </tr>
+                        <tr>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Apr</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">May</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Jun</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Jul</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Aug</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Sep</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Oct</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Nov</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Dec</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Jan</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Feb</th>
+                            <th class="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Mar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summaryTable" class="bg-white divide-y divide-gray-200">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Year Comparison -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+            <div class="p-4 border-b bg-gray-50">
+                <h3 class="text-lg font-semibold text-green-700">Year-over-Year Comparison</h3>
+            </div>
+            <div class="p-4">
+                <canvas id="comparisonChart" class="w-full h-64"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Transaction Data for 2023-24
+        const transactionData2024 = [
+            { id: 1, month: 'April', description: 'Eucalyptus Plants', quantity: 6000, unit: 'Nos', fpoRate: 4.75, amount: 28500, profit: 1500, agency: 'Shreeji Corporation' },
+            { month: 'April', description: 'Eucalyptus Harvest', quantity: 290.485, unit: 'Ton', fpoRate: 5555, amount: 1614146, profit: 16141, agency: 'Vasantbhai' },
+            { month: 'April', description: 'Eucalyptus Waste', quantity: 40, unit: 'Ton', fpoRate: 600, amount: 24000, profit: 4000, agency: 'Vasantbhai' },
+            { month: 'April', description: 'Oil Cans Sale', quantity: 75, unit: 'Nos', fpoRate: 3000, amount: 225000, profit: 7500, agency: 'Molimar Pvt. Ltd.' },
+            { id: 2, month: 'May', description: 'Kesar Keri', quantity: 107, unit: 'Box', fpoRate: 500, amount: 53500, profit: 7490, agency: 'Kutch Khedoi Farms' },
+            { id: 3, month: 'June', description: 'Eucalyptus Plants', quantity: 21900, unit: 'Nos', fpoRate: 4.75, amount: 104025, profit: 10950, agency: 'Shreeji Corporation' },
+            { month: 'June', description: 'Agro Waste', quantity: 104.5, unit: 'Ton', fpoRate: 1000, amount: 104500, profit: 104500, agency: 'Mama Agro Products' },
+            { id: 4, month: 'July', description: 'Eucalyptus Plants', quantity: 45840, unit: 'Nos', fpoRate: 4.75, amount: 217740, profit: 22920, agency: 'Shreeji Corporation' },
+            { id: 5, month: 'August', description: 'Agro Waste', quantity: 207.46, unit: 'Ton', fpoRate: 1000, amount: 207460, profit: 207460, agency: 'Mama Agro Products' },
+            { id: 6, month: 'September', description: 'Eucalyptus Plants', quantity: 35400, unit: 'Nos', fpoRate: 4.75, amount: 168150, profit: 0, agency: 'Shreeji Corporation' },
+            { id: 7, month: 'October', description: 'Eucalyptus Plants', quantity: 26700, unit: 'Nos', fpoRate: 4.75, amount: 126825, profit: 0, agency: 'Shreeji Corporation' },
+            { month: 'October', description: 'Eucalyptus Harvest', quantity: 8, unit: 'Ton', fpoRate: 6413.5, amount: 51308, profit: 508, agency: 'Jentibhai Danda' },
+            { id: 8, month: 'November', description: 'Eucalyptus Plants', quantity: 13700, unit: 'Nos', fpoRate: 4.75, amount: 65075, profit: 0, agency: 'Shreeji Corporation' },
+            { month: 'November', description: 'Eucalyptus Harvest', quantity: 47.5, unit: 'Ton', fpoRate: 6413.5, amount: 304641, profit: 3018, agency: 'Jentibhai Danda' },
+            { id: 9, month: 'December', description: 'Eucalyptus Plants', quantity: 31800, unit: 'Nos', fpoRate: 4.75, amount: 151050, profit: 15900, agency: 'Shreeji Corporation' },
+            { month: 'December', description: 'Eucalyptus Harvest', quantity: 342.815, unit: 'Ton', fpoRate: 6414, amount: 2198823, profit: 21988, agency: 'Jentibhai Danda' },
+            { month: 'December', description: 'Waste Supply', quantity: 77.09, unit: 'Ton', fpoRate: 3619.872, amount: 279016, profit: 46908, agency: 'Morbi Woodlam' },
+            { id: 10, month: 'January', description: 'Eucalyptus Plants', quantity: 2440, unit: 'Nos', fpoRate: 4.75, amount: 11590, profit: 1220, agency: 'Shreeji Corporation' },
+            { month: 'January', description: 'Eucalyptus Harvest', quantity: 116.73, unit: 'Ton', fpoRate: 5353, amount: 624856, profit: 6186, agency: 'Kamleshbhai Amod' },
+            { month: 'January', description: 'Eucalyptus Harvest', quantity: 134.905, unit: 'Ton', fpoRate: 6262, amount: 844369, profit: 8364, agency: 'Girishbhai Bharthana' },
+            { month: 'January', description: 'Eucalyptus Harvest', quantity: 454.315, unit: 'Ton', fpoRate: 5807.5, amount: 2638352, profit: 26136, agency: 'Vasantbhai' },
+            { month: 'January', description: 'Waste Supply', quantity: 72.17, unit: 'Ton', fpoRate: 500, amount: 36085, profit: 7217, agency: 'Jupiter Industries' },
+            { id: 11, month: 'February', description: 'Eucalyptus Plants', quantity: 23800, unit: 'Nos', fpoRate: 4.75, amount: 113050, profit: 11900, agency: 'Shreeji Corporation' },
+            { month: 'February', description: 'Eucalyptus Harvest', quantity: 487.48, unit: 'Ton', fpoRate: 6060, amount: 2954129, profit: 29244, agency: 'Prafullbhai Bharthana' },
+            { month: 'February', description: 'Eucalyptus Harvest', quantity: 39.345, unit: 'Ton', fpoRate: 6060, amount: 238431, profit: 2360, agency: 'Nabipur Kabrastan' },
+            { id: 12, month: 'March', description: 'Eucalyptus Plants', quantity: 1000, unit: 'Nos', fpoRate: 4.75, amount: 4750, profit: 500, agency: 'Shreeji Corporation' },
+            { month: 'March', description: 'Eucalyptus Harvest', quantity: 33.46, unit: 'Ton', fpoRate: 6211.5, amount: 207837, profit: 2058, agency: 'Jentibhai Danda' },
+            { month: 'March', description: 'Eucalyptus Harvest', quantity: 174.885, unit: 'Ton', fpoRate: 6236.75, amount: 1090663, profit: 10803, agency: 'Dineshbhai Dora' }
+        ];
+
+        // Summary Data for 2023-24
+        const summaryData2024 = {
+            'Eucalyptus Plants': {
+                quantity: [6000, 0, 21900, 45840, 0, 35400, 26700, 13700, 31800, 2440, 23800, 1000],
+                amount: [28500, 0, 104025, 217740, 0, 168150, 126825, 65075, 151050, 11590, 113050, 4750],
+                turnover: [28500, 0, 104025, 217740, 0, 168150, 126825, 65075, 151050, 11590, 113050, 4750]
+            },
+            'Eucalyptus Harvest': {
+                quantity: [290.485, 0, 0, 0, 0, 0, 8, 47.5, 342.815, 705.95, 526.825, 208.345],
+                amount: [1614146, 0, 0, 0, 0, 0, 51308, 304641, 2198823, 4107583, 3192560, 1298500],
+                turnover: [1614146, 0, 0, 0, 0, 0, 51308, 304641, 911201, 1317200, 806255, 948551]
+            },
+            'Agro Waste': {
+                quantity: [40, 0, 104.5, 0, 207.46, 0, 0, 0, 77.09, 72.17, 0, 0],
+                amount: [24000, 0, 104500, 0, 207460, 0, 0, 0, 279016, 36085, 0, 0],
+                turnover: [24000, 0, 104500, 0, 207460, 0, 0, 0, 279016, 36085, 0, 0]
+            },
+            'Oil Cans': {
+                quantity: [75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                amount: [225000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                turnover: [225000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            'Kesar Keri': {
+                quantity: [0, 107, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                amount: [0, 53500, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                turnover: [0, 53500, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            }
+        };
+
+        // Data for 2022-23 (for comparison)
+        const summaryData2023 = {
+            'Eucalyptus Plants': {
+                quantity: 326890,
+                amount: 1552728,
+                turnover: 1552728
+            },
+            'Biocol': {
+                quantity: 33.69,
+                amount: 282954,
+                turnover: 282954
+            },
+            'Eucalyptus Harvest': {
+                quantity: 831.5,
+                amount: 4679139,
+                turnover: 1062537
+            },
+            'Agro Waste': {
+                quantity: 39,
+                amount: 23106,
+                turnover: 23106
+            },
+            'Oil Cans': {
+                quantity: 0,
+                amount: 0,
+                turnover: 0
+            },
+            'Kesar Keri': {
+                quantity: 0,
+                amount: 0,
+                turnover: 0
+            }
+        };
+
+        // Populate Transaction Table
+        function populateTransactionTable(data) {
+            const tableBody = document.getElementById('transactionTable');
+            tableBody.innerHTML = '';
+            
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                
+                row.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${item.id || ''}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${item.month || ''}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${item.description}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${item.quantity.toLocaleString()}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${item.unit}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${item.fpoRate.toLocaleString()}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">₹${item.amount.toLocaleString()}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">₹${item.profit.toLocaleString()}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${item.agency}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            document.getElementById('visibleCount').textContent = data.length;
+            document.getElementById('totalCount').textContent = transactionData2024.length;
+        }
+
+        // Populate Summary Table
+        function populateSummaryTable() {
+            const tableBody = document.getElementById('summaryTable');
+            tableBody.innerHTML = '';
+            
+            const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+            
+            // Add rows for each product
+            Object.keys(summaryData2024).forEach(product => {
+                // Quantity row
+                const qtyRow = document.createElement('tr');
+                qtyRow.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${product} - Quantity</td>
+                    ${summaryData2024[product].quantity.map((qty, i) => `
+                        <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-500 text-right">${qty ? qty.toLocaleString() : '-'}</td>
+                    `).join('')}
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
+                        ${summaryData2024[product].quantity.reduce((a, b) => a + b, 0).toLocaleString()}
+                    </td>
+                `;
+                tableBody.appendChild(qtyRow);
+                
+                // Amount row
+                const amtRow = document.createElement('tr');
+                amtRow.className = 'bg-gray-50';
+                amtRow.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${product} - Amount (₹)</td>
+                    ${summaryData2024[product].amount.map((amt, i) => `
+                        <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-500 text-right">${amt ? '₹' + amt.toLocaleString() : '-'}</td>
+                    `).join('')}
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
+                        ₹${summaryData2024[product].amount.reduce((a, b) => a + b, 0).toLocaleString()}
+                    </td>
+                `;
+                tableBody.appendChild(amtRow);
+                
+                // Turnover row
+                const turnoverRow = document.createElement('tr');
+                turnoverRow.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${product} - Turnover (₹)</td>
+                    ${summaryData2024[product].turnover.map((turnover, i) => `
+                        <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-500 text-right">${turnover ? '₹' + turnover.toLocaleString() : '-'}</td>
+                    `).join('')}
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
+                        ₹${summaryData2024[product].turnover.reduce((a, b) => a + b, 0).toLocaleString()}
+                    </td>
+                `;
+                tableBody.appendChild(turnoverRow);
+            });
+            
+            // Add total row
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'bg-green-50';
+            totalRow.innerHTML = `
+                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-900">Total Amount (₹)</td>
+                ${months.map((month, i) => {
+                    let total = 0;
+                    Object.keys(summaryData2024).forEach(product => {
+                        total += summaryData2024[product].amount[i];
+                    });
+                    return `<td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-green-900 text-right">${total ? '₹' + total.toLocaleString() : '-'}</td>`;
+                }).join('')}
+                <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-green-900 text-right">
+                    ₹${Object.keys(summaryData2024).reduce((total, product) => 
+                        total + summaryData2024[product].amount.reduce((a, b) => a + b, 0), 0).toLocaleString()}
+                </td>
+            `;
+            tableBody.appendChild(totalRow);
+        }
+
+        // Initialize Charts
+        function initializeCharts() {
+            // Monthly Sales Chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+            
+            // Calculate monthly totals
+            const monthlyTotals = months.map((_, i) => {
+                return Object.keys(summaryData2024).reduce((total, product) => {
+                    return total + (summaryData2024[product].amount[i] || 0);
+                }, 0);
+            });
+            
+            new Chart(salesCtx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Monthly Sales (₹)',
+                        data: monthlyTotals,
+                        backgroundColor: 'rgba(5, 150, 105, 0.7)',
+                        borderColor: 'rgba(5, 150, 105, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Sales: ₹' + context.raw.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Product Distribution Chart
+            const productCtx = document.getElementById('productChart').getContext('2d');
+            const productLabels = Object.keys(summaryData2024);
+            const productData = productLabels.map(product => {
+                return summaryData2024[product].amount.reduce((a, b) => a + b, 0);
+            });
+            
+            new Chart(productCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: productLabels,
+                    datasets: [{
+                        data: productData,
+                        backgroundColor: [
+                            'rgba(5, 150, 105, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(22, 163, 74, 0.7)',
+                            'rgba(34, 197, 94, 0.7)',
+                            'rgba(101, 163, 13, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(5, 150, 105, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(22, 163, 74, 1)',
+                            'rgba(34, 197, 94, 1)',
+                            'rgba(101, 163, 13, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ₹${value.toLocaleString()} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Year Comparison Chart
+            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+            const comparisonLabels = ['Eucalyptus Plants', 'Eucalyptus Harvest', 'Agro Waste', 'Oil Cans', 'Kesar Keri'];
+            
+            new Chart(comparisonCtx, {
+                type: 'bar',
+                data: {
+                    labels: comparisonLabels,
+                    datasets: [
+                        {
+                            label: '2022-23',
+                            data: [
+                                summaryData2023['Eucalyptus Plants'].amount,
+                                summaryData2023['Eucalyptus Harvest'].amount,
+                                summaryData2023['Agro Waste'].amount,
+                                summaryData2023['Oil Cans'].amount,
+                                summaryData2023['Kesar Keri'].amount
+                            ],
+                            backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                            borderColor: 'rgba(99, 102, 241, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '2023-24',
+                            data: [
+                                summaryData2024['Eucalyptus Plants'].amount.reduce((a, b) => a + b, 0),
+                                summaryData2024['Eucalyptus Harvest'].amount.reduce((a, b) => a + b, 0),
+                                summaryData2024['Agro Waste'].amount.reduce((a, b) => a + b, 0),
+                                summaryData2024['Oil Cans'].amount.reduce((a, b) => a + b, 0),
+                                summaryData2024['Kesar Keri'].amount.reduce((a, b) => a + b, 0)
+                            ],
+                            backgroundColor: 'rgba(5, 150, 105, 0.7)',
+                            borderColor: 'rgba(5, 150, 105, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ₹${context.raw.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Filter Transactions
+        function filterTransactions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const monthFilter = document.getElementById('monthFilter').value;
+            const productFilter = document.getElementById('productFilter').value;
+            
+            let filteredData = transactionData2024.filter(item => {
+                const matchesSearch = item.description.toLowerCase().includes(searchTerm) || 
+                                    item.agency.toLowerCase().includes(searchTerm);
+                const matchesMonth = !monthFilter || item.month === monthFilter;
+                const matchesProduct = !productFilter || item.description.includes(productFilter);
+                
+                return matchesSearch && matchesMonth && matchesProduct;
+            });
+            
+            populateTransactionTable(filteredData);
+        }
+
+        // Export to Excel (simulated)
+        function exportToExcel() {
+            alert('Export to Excel functionality would be implemented here. This is a simulation.');
+            // In a real implementation, you would use a library like SheetJS
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            populateTransactionTable(transactionData2024);
+            populateSummaryTable();
+            initializeCharts();
+            
+            // Add event listeners for filters
+            document.getElementById('searchInput').addEventListener('input', filterTransactions);
+            document.getElementById('monthFilter').addEventListener('change', filterTransactions);
+            document.getElementById('productFilter').addEventListener('change', filterTransactions);
+        });
+    </script>
+</body>
+</html>
